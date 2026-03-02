@@ -1,15 +1,53 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
+  <actions/>
+  <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@5.10.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/GitheTrunk/DevOpsTP1.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/main</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="empty-list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>laravel_agent</assignedNode>
+  <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers/>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec>H/2 * * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <builders/>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># Go to workspace
+cd $WORKSPACE
+
+# Install dependencies (optional if not in Docker)
+composer install --no-interaction --prefer-dist
+
+# Run Laravel migrations (optional)
+php artisan migrate --force
+
+# Run tests
+php artisan test</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+  </builders>
   <publishers/>
   <buildWrappers/>
 </project>
