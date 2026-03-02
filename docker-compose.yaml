@@ -1,0 +1,32 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    container_name: jenkins-tp01-I4C
+    volumes:
+      - "./jenkins_home:/var/jenkins_home"
+  laravel-agent:
+    build: ./laravel-agent
+    image: i4c/jenkins-agent:latest
+    container_name: jenkins-laravel-agent-I4C
+    volumes:
+      - "./jenkins_agent_home:/home/jenkins"
+    depends_on:
+      - jenkins
+    environment:
+      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_AGENT_NAME=laravel-agent-I4C
+      - "JENKINS_AGENT_SSH_PUBKEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILdrO+W7WI5ZphQxcwBqiBKXKcARiEu8v7PcH5wQIX/7 macbookpro@Macbooks-MacBook-Pro-4.local"
+  laravel-app:
+      image: php:8.4-cli
+      container_name: laravel-app
+      working_dir: /var/www/html
+      volumes:
+        - ./tp1_devops:/var/www/html
+      ports:
+        - "8000:8000"
+      command: php artisan serve --host=0.0.0.0 --port=8000

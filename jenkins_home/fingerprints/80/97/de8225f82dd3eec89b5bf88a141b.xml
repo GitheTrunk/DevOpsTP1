@@ -1,0 +1,14 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<fingerprint>
+  <timestamp>2026-03-02 14:12:24.312 UTC</timestamp>
+  <md5sum>8097de8225f82dd3eec89b5bf88a141b</md5sum>
+  <fileName>Credential id=jenkins name=sengleang (jenkins)</fileName>
+  <usages/>
+  <facets>
+    <com.cloudbees.plugins.credentials.fingerprints.NodeCredentialsFingerprintFacet plugin="credentials@1491.v6d6145e96e1c">
+      <timestamp>1772463857728</timestamp>
+      <nodeName>laravel-agent-I4C</nodeName>
+      <timestamp0>1772463671511</timestamp0>
+    </com.cloudbees.plugins.credentials.fingerprints.NodeCredentialsFingerprintFacet>
+  </facets>
+</fingerprint>
