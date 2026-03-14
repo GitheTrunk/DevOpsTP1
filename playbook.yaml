@@ -1,0 +1,50 @@
+---
+- name: Setup Target Server
+  hosts: staging # matches the group name in inventory.ini
+  become: yes # run all tasks with sudo (privilege escalation)
+  tasks:
+    # ── Task 1: verify SSH+Python connectivity 
+    - name: Ping the server
+      ansible.builtin.ping:
+
+    # ── Task 2: install system packages 
+    - name: Install Python venv and pip (Ubuntu/Debian)
+      ansible.builtin.apt:
+        name:
+          - python3-venv # needed to create isolated virtual environments
+          - python3-pip # needed to install Python packages
+        state: present # install if not already installed
+        update_cache: yes # equivalent to `apt-get update` before installing
+
+    # ── Task 3: create the deployment directory
+    - name: Ensure remote devops directory exists
+      ansible.builtin.file:
+        path: /root/devops
+        state: directory # create the directory if it does not exist
+        owner: root
+        group: root
+        mode: "0755" # rwxr-xr-x
+
+    # ── Task 4: copy project files to the server
+    - name: Copy requirements.txt to server
+      ansible.builtin.copy:
+        src: ./requirements.txt # path on the control machine
+        dest: /root/devops/requirements.txt # path on the target server
+
+    # ── Task 5: create a Python virtual environment
+    - name: Create Python virtual environment
+      ansible.builtin.command:
+        cmd: python3 -m venv /root/devops/venv
+      args:
+        creates: /root/devops/venv/bin/activate
+      # `creates` makes this task idempotent – it is skipped when the
+      # file already exists, so re-running the playbook is safe.
+
+    # ── Task 6: install Python packages inside the venv
+    - name: Install Python packages in virtual environment
+      ansible.builtin.pip:
+        virtualenv: /root/devops/venv # use the venv, not system pip
+        requirements: /root/devops/requirements.txt
+      # Using a venv avoids the PEP 668 "externally-managed-environment"
+      # error that occurs when pip tries to install into the system Python
+      # on modern Debian/Ubuntu systems.

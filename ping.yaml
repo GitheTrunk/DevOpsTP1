@@ -1,0 +1,6 @@
+---
+- name: Test server connectivity
+  hosts: staging
+  tasks:
+    - name: Ping the server
+      ansible.builtin.ping:
